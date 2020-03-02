@@ -26,12 +26,11 @@ npm="$node_bin_path/npm"
 add_node_path="/etc/profile.d/add_node_path.sh"
 
 check_init () {
-    [ -r "$add_node_path" ] &&\
     [ -L "$node_link_path" ] &&\
+    [ -r "$add_node_path" ] &&\
+    [ -x $npm -a -x $node_bin_path/node ] &&\
     [ -d "$npm_global_dir" ] &&\
-    [ -x $npm ] &&\
-    [ "`$npm config get prefix`" = "$npm_global_dir" ] ||\
-    {
+    grep -q "prefix=$npm_global_dir" ~/.npmrc || {
         echo "未初始化，先运行 nvm init"
         return 1
     }
