@@ -13,15 +13,16 @@
 git clone https://github.com/linxuekai/nvm.git ~/.nvm
 ```
 
-然后创建个软连接到你的 PATH 可以找到的地方就行了
+运行目录下的 `install.sh`
 ```
-sudo ln -s ~/.nvm/nvm.sh /usr/local/bin
+cd ~/.nvm
+sudo ./install.sh
 ```
 
 
 # Usage
 
-版本号 `version` 的输入需要经过校验，规则为 `/^v(\d+\.){2}\d+$/` ( v数字.数字.数字 )
+版本号 `version` 的输入需要经过校验，规则为 `/^v(\d+\.){2}\d+$/` ( v大版本号.小版本号.修订号 )
 
 这个脚本提供了以下几个功能 
 
@@ -37,13 +38,23 @@ sudo ln -s ~/.nvm/nvm.sh /usr/local/bin
 
 * ## 查看已安装的 node 版本列表
   ```sh
-  sudo nvm install [version]
+  sudo nvm ls
   ```
 
 * ## 切换使用特定 node 版本
   ```sh
   sudo nvm use [version]
   ```
+
+# Uninstall
+
+当你不再想用时，这里也提供了很方便的卸载工具，自动将所有东西清理一干二净。
+
+```
+cd ~/.nvm
+sudo ./uninstall.sh
+```
+
 
 
 ## Todo
