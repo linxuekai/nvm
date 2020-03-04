@@ -56,7 +56,7 @@ list () {
 }
 
 check_version_input () {
-    [ `echo "$1" | grep -P '^v(\d+\.){2}\d+$' | wc -l` -eq 1 ]
+    echo "$1" | grep -qP '^v(\d+\.){2}\d+$'
     exit_if_err '版本号不正确 匹配 v主版本号.次版本号.修订号'
 }
 
@@ -167,8 +167,10 @@ install () {
 
     # 第一次安装版本时需要 init 并重启终端
     check_init || {
-        init && . ./nvm-conf-profile.sh
-        echo "这是你的第一次安装 node，请重新启动终端，否则全局 npm 包将缺少全局路径。"
+        init
+        exit_if_err '初始化失败，请重试。'
+        
+        echo "已安装 node $1 并完成 nvm 初始化。\n首次安装请重新启动终端，否则全局 npm 包将被安装到 $1 版本目录下而非预期的全局目录。"
     }
 }
 
