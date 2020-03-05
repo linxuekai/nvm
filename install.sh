@@ -6,5 +6,5 @@
   exit 1
 }
 
-ln $PWD/nvm.sh /usr/local/bin/nvm &&\
+ln -s $(dirname `readlink -f $0`)/nvm.sh /usr/local/bin/nvm &&\
 nvm usage
