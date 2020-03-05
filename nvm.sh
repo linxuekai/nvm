@@ -27,7 +27,7 @@ node_current_path="$nvm_base/node-current"
 node="$node_current_path/bin/node"
 nvm_conf_profile="/etc/profile.d/nvm-conf-profile.sh"
 
-reg_version_name="(\d{1,2}\.){2}\d{1,2}"
+reg_version_name="v(\d{1,2}\.){2}\d{1,2}"
 
 # @func
 # 检查是否已经进行过初始化，满足条件：
