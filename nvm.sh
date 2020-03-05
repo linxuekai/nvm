@@ -18,12 +18,13 @@ check_permission () {
 }
 
 # 定义变量
-node_versions_dir="/opt/nvm/node-versions"
-npm_global_dir="/opt/nvm/npm_global"
+nvm_base="/opt/nvm"
 
-node_current_path="/opt/nvm/node-current"
+node_versions_dir="$nvm_base/node-versions"
+npm_global_dir="$nvm_base/npm_global"
+node_current_path="$nvm_base/node-current"
+
 node="$node_current_path/bin/node"
-
 nvm_conf_profile="/etc/profile.d/nvm-conf-profile.sh"
 
 # @func

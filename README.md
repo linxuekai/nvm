@@ -64,8 +64,7 @@ sudo ./uninstall.sh
 
 <!--
 rm /etc/profile.d/add_node_path.sh
-rm /opt/node-versions/node* -r    
-rm /usr/local/nodejs                                  
+rm /opt/node-versions/node* -r                                 
 rm /tmp/node* -r                  
 rm ~/.npmrc
 -->
