@@ -27,6 +27,8 @@ node_current_path="$nvm_base/node-current"
 node="$node_current_path/bin/node"
 nvm_conf_profile="/etc/profile.d/nvm-conf-profile.sh"
 
+reg_version_name="(\d{1,2}\.){2}\d{1,2}"
+
 # @func
 # 检查是否已经进行过初始化，满足条件：
 #
@@ -49,7 +51,7 @@ check_init () {
 
 list () {
     [ -x $node ] && v_current=`$node --version`
-	versions=`ls $node_versions_dir | grep -oP 'v(\d+\.?)+'`
+	versions=`ls $node_versions_dir | grep -oP "$reg_version_name" | head -1`
 	for version in $versions
 	do
 		[ "$version" = "$v_current" ] && echo "* $version" || echo "  $version"
@@ -57,7 +59,7 @@ list () {
 }
 
 check_version_input () {
-    echo "$1" | grep -qP '^v(\d+\.){2}\d+$'
+    echo "$1" | grep -qP "^$reg_version_name$"
     exit_if_err '版本号不正确 匹配 v主版本号.次版本号.修订号'
 }
 
