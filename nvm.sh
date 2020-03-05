@@ -119,7 +119,7 @@ init () {
     }
 
     # 5. nvm_conf_profile 存在
-    [ -r $nvm_conf_profile ] || cp ./nvm-conf-profile.sh /etc/profile.d/
+    [ -r $nvm_conf_profile ] || cp `dirname $0`/nvm-conf-profile.sh /etc/profile.d/
     exit_if_err  "创建 $nvm_conf_profile 失败"
 }
 
