@@ -127,6 +127,8 @@ init () {
 
     # 设置 npm prefix
     npm config set prefix $npm_global_dir
+
+    echo "已安装 node $1 并完成 nvm 初始化。\n首次安装请重新启动终端，否则全局 npm 包将缺少全局路径。"
 }
 
 install () {
