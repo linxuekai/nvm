@@ -124,6 +124,9 @@ init () {
     # 5. nvm_conf_profile 存在
     [ -r $nvm_conf_profile ] || cp $(dirname `readlink -f $0`)/nvm-conf-profile.sh /etc/profile.d/
     exit_if_err  "创建 $nvm_conf_profile 失败"
+
+    # 设置 npm prefix
+    npm config set prefix $npm_global_dir
 }
 
 install () {
@@ -172,8 +175,6 @@ install () {
     check_init || {
         init
         exit_if_err '初始化失败，请重试。'
-        
-        echo "已安装 node $1 并完成 nvm 初始化。\n首次安装请重新启动终端，否则全局 npm 包将被安装到 $1 版本目录下而非预期的全局目录。"
     }
 }
 
