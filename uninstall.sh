@@ -15,4 +15,4 @@ do
   rm /usr/local/bin/$x
 done
 
-sed -i "/^prefix/d" ~/.npmrc
+rm /home/*/.npmrc
