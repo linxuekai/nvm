@@ -15,4 +15,5 @@ do
   rm /usr/local/bin/$x
 done
 
+rm /root/.npmrc
 rm /home/*/.npmrc
