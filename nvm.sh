@@ -51,7 +51,7 @@ check_init () {
 
 list () {
     [ -x $node ] && v_current=`$node --version`
-	versions=`ls $node_versions_dir | grep -oP "$reg_version_name" | head -1`
+	versions=`ls $node_versions_dir | grep -oP "$reg_version_name"`
 	for version in $versions
 	do
 		[ "$version" = "$v_current" ] && echo "* $version" || echo "  $version"
