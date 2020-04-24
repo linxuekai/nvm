@@ -64,7 +64,17 @@ check_version_input () {
 }
 
 usage () {
-    echo "usage: nvm [ls | use | install | remove] [version]"
+cat <<- EOF
+    usage: nam {action} [version]
+    
+    actions:
+        all             - List all versions in remote server
+        list    | ls    - List versions in local machine
+        install | i     - Install [version]
+        use             - Use [version]
+        remove  | r     - Remove [version]
+
+EOF
 }
 
 use () {
@@ -196,7 +206,14 @@ remove () {
     rm -r $node_versions_dir/*$1*
 }
 
+all () {
+     curl -s https://npm.taobao.org/mirrors/node/index.tab | awk '/v[1-9][0-9]?\.[0-9]+\.[0-9]+/ {if (($(NF-1) != "-")) {print $1"\tlts:"$(NF-1)} else {print $1}}'
+}
+
 case "$1" in
+all)
+    all
+    ;;
 ls | list)
     check_init && list || echo '未安装 node 版本'
     ;;
