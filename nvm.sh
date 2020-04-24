@@ -150,7 +150,7 @@ install () {
     [ "$m_flag" = "x86_64" ] && m_flag='x64'
 
     # 下载并放到 tmp 目录
-    url="https://nodejs.org/dist/$1/node-$1-linux-$m_flag.tar.xz"
+    url="https://npm.taobao.org/mirrors/node/$1/node-$1-linux-$m_flag.tar.xz"
     wget $url -q --show-progress -O /tmp/node-$1.tar.xz
     exit_if_err "下载 $url 失败"
 
