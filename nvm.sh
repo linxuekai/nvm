@@ -65,7 +65,7 @@ check_version_input () {
 
 usage () {
 cat <<- EOF
-    usage: nam {action} [version]
+    usage: nvm {action} [version]
     
     actions:
         all             - List all versions in remote server
