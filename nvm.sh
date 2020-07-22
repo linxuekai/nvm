@@ -158,6 +158,7 @@ install () {
     # 机器表示，不同机器需要不同的安装包
     m_flag=`uname -m`
     [ "$m_flag" = "x86_64" ] && m_flag='x64'
+    [ "$m_flag" = "aarch64" ] && m_flag='arm64'
 
     # 下载并放到 tmp 目录
     url="https://npm.taobao.org/mirrors/node/$1/node-$1-linux-$m_flag.tar.xz"
