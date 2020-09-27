@@ -26,6 +26,11 @@ sudo ./install.sh
 
 这个脚本提供了以下几个功能 
 
+* ## 查看所有可安装的 node 版本列表
+  ```sh
+  nvm all
+  ```
+
 * ## 安装 node 版本
   ```sh
   sudo nvm install [version]
@@ -60,7 +65,7 @@ sudo ./uninstall.sh
 ## Todo
 
 * [x] 卸载功能
-* [ ] 远程版本号获取
+* [x] 远程版本号获取
 
 <!--
 rm /etc/profile.d/add_node_path.sh

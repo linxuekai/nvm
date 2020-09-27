@@ -2,7 +2,7 @@
 
 # @func - 封装出错返回
 # @param $1 - 错误提示
-exit_if_err () {
+exit_if_err() {
     RET=$?
     [ $RET -eq 0 ] || {
         echo $1
@@ -12,59 +12,38 @@ exit_if_err () {
 }
 
 # @func - 需要权限时检查如果不是 root 运行就退出
-check_permission () {
-    [ "root" = "$USER" ]
+check_permission() {
+    [ "root" = "$(whoami)" ]
     exit_if_err '非 root 请使用 sudo 运行'
 }
 
 # 定义变量
-nvm_base="/opt/nvm"
+nvm_base=/opt/nvm
 
-node_versions_dir="$nvm_base/node-versions"
-npm_global_dir="$nvm_base/npm_global"
-node_current_path="$nvm_base/node-current"
+node_versions_dir=$nvm_base/node-versions
+npm_global_dir=$nvm_base/npm_global
+node_current_path=$nvm_base/node-current
 
-node="$node_current_path/bin/node"
-nvm_conf_profile="/etc/profile.d/nvm-conf-profile.sh"
+node=$node_current_path/bin/node
+nvm_conf_profile=/etc/profile.d/nvm-conf-profile.sh
 
 reg_version_name="v(\d{1,2}\.){2}\d{1,2}"
 
-# @func
-# 检查是否已经进行过初始化，满足条件：
-#
-# 1. $node_current_path/bin/node 可运行
-# 2. ① 指向的 node 是通过 nvm 安装的
-# 3. /usr/local/bin/[node, npm, npx] 指向 $node_current_path/bin/[x]
-# 4. npm_grobal_dir 文件夹存在
-# 5. nvm_conf_profile 存在
-#
-check_init () {
-    [ -x $node ] && {
-        for x in node npm npx
-        do
-            [ /usr/local/bin/$x -ef $node_current_path/bin/$x ] || return 1
-        done
-    } &&\
-    [ -d $npm_global_dir ] &&\
-    [ -r $nvm_conf_profile ]
+list() {
+    [ -x $node ] && v_current=$($node --version)
+    versions=$(ls $node_versions_dir 2>/dev/null | grep -oP "$reg_version_name")
+    for version in $versions; do
+        [ "$version" = "$v_current" ] && echo "* $version" || echo "  $version"
+    done
 }
 
-list () {
-    [ -x $node ] && v_current=`$node --version`
-	versions=`ls $node_versions_dir | grep -oP "$reg_version_name"`
-	for version in $versions
-	do
-		[ "$version" = "$v_current" ] && echo "* $version" || echo "  $version"
-	done
-}
-
-check_version_input () {
+check_version_input() {
     echo "$1" | grep -qP "^$reg_version_name$"
     exit_if_err '版本号不正确 匹配 v主版本号.次版本号.修订号'
 }
 
-usage () {
-cat <<- EOF
+usage() {
+    cat <<-EOF
     usage: nvm {action} [version]
     
     actions:
@@ -77,14 +56,14 @@ cat <<- EOF
 EOF
 }
 
-use () {
+use() {
     # 检查权限
     check_permission
 
     # 检查输入版本号是否正确
     check_version_input $1
 
-    v_use=`echo "\`list\`" | grep $1`
+    v_use=$(echo "$(list)" | grep $1)
 
     # 没有找到版本号则退出
     [ -n "$v_use" ]
@@ -98,50 +77,41 @@ use () {
 
     # 可以切换的版本号
     # 删除原有软连接并重新创建
-    [ -L "$node_current_path" ] && rm $node_current_path
-    v_dir_name=`ls $node_versions_dir | grep $v_use`
+    [ -L $node_current_path ] && rm $node_current_path
+    v_dir_name=$(ls $node_versions_dir | grep $v_use)
     ln -s $node_versions_dir/$v_dir_name $node_current_path
     exit_if_err '重新创建软连接失败'
+
+    # 重置环境
+    init
 }
 
 # @func
 # 在第一次通过 nvm 安装 node 时进行，
 # 使 check_init 检查可以通过
 #
-init () {
-    # 检查权限
-    check_permission
-
-    # 1. $node_current_path/bin/node 可运行
-    # 2. ① 指向的 node 是通过 nvm 安装的
-    # $node_current_path 链接由 use 方法负责创建
-    [ -x $node ]
-    exit_if_err '未安装 node 版本'
-
-    # 3. /usr/local/bin/[node, npm, npx] 指向 $node_current_path/bin/[x]
-    for x in node npm npx
-    do
-        ln -s $node_current_path/bin/$x /usr/local/bin/$x
+init() {
+    # /usr/local/bin/[node, npm, npx] 指向 $node_current_path/bin/[x]
+    for x in node npm npx; do
+        [ /usr/local/bin/$x -ef $node_current_path/bin/$x ] ||
+            ln -s $node_current_path/bin/$x /usr/local/bin/$x
         exit_if_err "创建 /usr/local/bin/$x 软连接失败"
     done
 
-    # 4. npm_grobal_dir 文件夹存在
-    [ -d $npm_global_dir ] || {
-        mkdir -p $npm_global_dir
-        exit_if_err "创建 $npm_global_dir 失败"
-    }
+    # npm_grobal_dir 文件夹存在
+    [ -d $npm_global_dir ] || mkdir -p $npm_global_dir
+    exit_if_err "创建 $npm_global_dir 失败"
 
     # 5. nvm_conf_profile 存在
-    [ -r $nvm_conf_profile ] || cp $(dirname `readlink -f $0`)/nvm-conf-profile.sh /etc/profile.d/
-    exit_if_err  "创建 $nvm_conf_profile 失败"
+    [ -r $nvm_conf_profile ] ||
+        cp $(dirname $(readlink -f $0))/nvm-conf-profile.sh $nvm_conf_profile
+    exit_if_err "创建 $nvm_conf_profile 失败"
 
-    # 设置 npm prefix
-    npm config set prefix $npm_global_dir
-
-    echo "已安装 node $1 并完成 nvm 初始化。\n首次安装请重新启动终端，否则全局 npm 包将缺少全局路径。"
+    [ "$(list | wc -l)" = "1" ] &&
+        echo '\n首次安装 nodejs，请重启终端使配置生效。'
 }
 
-install () {
+install() {
     # 检查权限
     check_permission
 
@@ -149,14 +119,14 @@ install () {
     check_version_input $1
 
     # 不能重复安装同一版本
-    [ -d $node_versions_dir ] &&\
-    echo "`list`" | grep -q $1 && {
+    [ -d $node_versions_dir ] &&
+        echo "$(list)" | grep -q $1 && {
         use $1
         exit
     }
-    
+
     # 机器表示，不同机器需要不同的安装包
-    m_flag=`uname -m`
+    m_flag=$(uname -m)
     [ "$m_flag" = "x86_64" ] && m_flag='x64'
     [ "$m_flag" = "aarch64" ] && m_flag='arm64'
 
@@ -172,9 +142,9 @@ install () {
         RET=$?
 
         echo -e "\n安装失败，下载的 node 安装包不完整，请重试。"
-        
+
         # 清理垃圾
-        bad_dir_name=`ls $node_versions_dir | grep $1`
+        bad_dir_name=$(ls $node_versions_dir | grep $1)
         [ -n "$bad_dir_name" ] && rm -r $node_versions_dir/$bad_dir_name
         rm /tmp/node-$1.tar.xz
 
@@ -183,22 +153,16 @@ install () {
 
     # 解压完了调用 use 使可以使用
     use $1
-
-    # 第一次安装版本时需要 init 并重启终端
-    check_init || {
-        init
-        exit_if_err '初始化失败，请重试。'
-    }
 }
 
-remove () {
+remove() {
     # 检查权限
     check_permission
 
     # 检查输入版本号是否正确
     check_version_input $1
 
-    [ -x $node ] && v_current=`$node --version`
+    [ -x $node ] && v_current=$($node --version)
     exit_if_err '未安装 node 版本'
 
     [ "$1" != "$v_current" ]
@@ -207,8 +171,8 @@ remove () {
     rm -r $node_versions_dir/*$1*
 }
 
-all () {
-     curl -s https://npm.taobao.org/mirrors/node/index.tab | awk '/v[1-9][0-9]?\.[0-9]+\.[0-9]+/ {if (($(NF-1) != "-")) {print $1"\tlts:"$(NF-1)} else {print $1}}'
+all() {
+    curl -s https://npm.taobao.org/mirrors/node/index.tab | awk '/v[1-9][0-9]?\.[0-9]+\.[0-9]+/ {if (($(NF-1) != "-")) {print $1"\tlts:"$(NF-1)} else {print $1}}'
 }
 
 case "$1" in
@@ -216,10 +180,10 @@ all)
     all
     ;;
 ls | list)
-    check_init && list || echo '未安装 node 版本'
+    list
     ;;
 use)
-    check_init && use $2
+    use $2
     ;;
 i | install)
     install $2

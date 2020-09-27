@@ -7,11 +7,10 @@
 }
 
 rm -r /opt/nvm
-rm -r /etc/profile.d/nvm-conf-profile.sh
+rm /etc/profile.d/nvm-conf-profile.sh
 rm /usr/local/bin/nvm
 
-for x in node npm npx
-do
+for x in node npm npx; do
   rm /usr/local/bin/$x
 done
 

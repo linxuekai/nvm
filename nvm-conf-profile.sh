@@ -1,7 +1,9 @@
 npm_prefix=/opt/nvm/npm_global
 
-PATH=$npm_prefix/bin:/opt/nvm/node-current/bin:$PATH
+for bin_path in /opt/nvm/node-current/bin $npm_prefix/bin; do
+  echo $PATH | grep -qE "${bin_path}[:$]" ||
+    export PATH=$bin_path:$PATH
+done
 
-[ -r ~/.npmrc ] && grep -qP "^prefix=$npm_prefix$" ~/.npmrc || {
-  echo "prefix=$npm_prefix" >> ~/.npmrc
-}
+grep -qP "^prefix=$npm_prefix$" ~/.npmrc 2>/dev/null ||
+  echo "prefix=$npm_prefix" >>~/.npmrc
