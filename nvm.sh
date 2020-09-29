@@ -102,13 +102,20 @@ init() {
     [ -d $npm_global_dir ] || mkdir -p $npm_global_dir
     exit_if_err "创建 $npm_global_dir 失败"
 
-    # 5. nvm_conf_profile 存在
+    #  nvm_conf_profile 存在
     [ -r $nvm_conf_profile ] ||
         cp $(dirname $(readlink -f $0))/nvm-conf-profile.sh $nvm_conf_profile
     exit_if_err "创建 $nvm_conf_profile 失败"
 
-    [ "$(list | wc -l)" = "1" ] &&
-        echo '\n首次安装 nodejs，请重启终端使配置生效。'
+    # /root/.npmrc
+    npm c set prefix $npm_global_dir
+    # ~/.npmrc
+    if [ -n "$SUDO_USER" ]; then
+        sudo -u $SUDO_USER npm c set prefix $npm_global_dir
+    fi
+
+    echo $PATH | grep -qE "${npm_global_dir}/bin[:$]" ||
+        echo '由于路径配置只在登录终端中生效， 请重新登录，否则无法通过 PATH 访问到 npm 全局包。'
 }
 
 install() {
