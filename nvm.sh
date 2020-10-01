@@ -107,6 +107,11 @@ init() {
         cp $(dirname $(readlink -f $0))/nvm-conf-profile.sh $nvm_conf_profile
     exit_if_err "创建 $nvm_conf_profile 失败"
 
+    # 支持 zsh
+    if [ -r /etc/zsh/zprofile ]; then
+        echo 'source /etc/profile.d/nvm-conf-profile.sh' >>/etc/zsh/zprofile
+    fi
+
     # /root/.npmrc
     npm c set prefix $npm_global_dir
     # ~/.npmrc
