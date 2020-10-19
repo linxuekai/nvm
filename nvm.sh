@@ -108,8 +108,11 @@ init() {
     exit_if_err "创建 $nvm_conf_profile 失败"
 
     # 支持 zsh
-    if [ -r /etc/zsh/zshrc ]; then
-        echo 'source /etc/profile.d/nvm-conf-profile.sh' >>/etc/zsh/zshrc
+    etc_zshrc=/etc/zsh/zshrc
+    if [ -r $etc_zshrc ]; then
+	source_cmd='source /etc/profile.d/nvm-conf-profile.sh'
+	grep -q "^$source_cmd$" $etc_zshrc ||
+        echo $source_cmd >> $etc_zshrc
     fi
 
     # /root/.npmrc
