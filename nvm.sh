@@ -122,7 +122,8 @@ init() {
         sudo -u $SUDO_USER npm c set prefix $npm_global_dir
     fi
 
-    if $(echo $PATH | grep -qE "${npm_global_dir}/bin[:$]"); then
+    # 首次安装 nodejs 提示重登
+    if [ $is_install -eq 1 ] && [ $(list | wc -l) -eq 1 ]; then
         echo '由于路径配置只在登录终端中生效， 请重新登录，否则无法通过 PATH 访问到 npm 全局包。'
     fi
 }
@@ -202,6 +203,7 @@ use)
     use $2
     ;;
 i | install)
+    is_install=1
     install $2
     ;;
 r | rm | remove)
