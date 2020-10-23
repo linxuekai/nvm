@@ -122,8 +122,9 @@ init() {
         sudo -u $SUDO_USER npm c set prefix $npm_global_dir
     fi
 
-    echo $PATH | grep -qE "${npm_global_dir}/bin[:$]" ||
+    if $(echo $PATH | grep -qE "${npm_global_dir}/bin[:$]"); then
         echo '由于路径配置只在登录终端中生效， 请重新登录，否则无法通过 PATH 访问到 npm 全局包。'
+    fi
 }
 
 install() {
