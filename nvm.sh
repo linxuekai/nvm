@@ -25,7 +25,6 @@ npm_global_dir=$nvm_base/npm_global
 node_current_path=$nvm_base/node-current
 
 node=$node_current_path/bin/node
-nvm_conf_profile=/etc/profile.d/nvm-conf-profile.sh
 
 reg_version_name="v(\d{1,2}\.){2}\d{1,2}"
 
@@ -45,7 +44,7 @@ check_version_input() {
 usage() {
     cat <<-EOF
     usage: nvm {action} [version]
-    
+
     actions:
         all             - List all versions in remote server
         list    | ls    - List versions in local machine
@@ -102,30 +101,8 @@ init() {
     [ -d $npm_global_dir ] || mkdir -p $npm_global_dir
     exit_if_err "创建 $npm_global_dir 失败"
 
-    #  nvm_conf_profile 存在
-    [ -r $nvm_conf_profile ] ||
-        cp $(dirname $(readlink -f $0))/nvm-conf-profile.sh $nvm_conf_profile
-    exit_if_err "创建 $nvm_conf_profile 失败"
-
-    # 支持 zsh
-    etc_zshrc=/etc/zsh/zshrc
-    if [ -r $etc_zshrc ]; then
-	source_cmd='source /etc/profile.d/nvm-conf-profile.sh'
-	grep -q "^$source_cmd$" $etc_zshrc ||
-        echo $source_cmd >> $etc_zshrc
-    fi
-
-    # /root/.npmrc
-    npm c set prefix $npm_global_dir
-    # ~/.npmrc
-    if [ -n "$SUDO_USER" ]; then
-        sudo -u $SUDO_USER npm c set prefix $npm_global_dir
-    fi
-
-    # 首次安装 nodejs 提示重登
-    if [ $is_install -eq 1 ] && [ $(list | wc -l) -eq 1 ]; then
-        echo '由于路径配置只在登录终端中生效， 请重新登录，否则无法通过 PATH 访问到 npm 全局包。'
-    fi
+    # 设置npm全局prefix
+    npm c -g set prefix $npm_global_dir
 }
 
 install() {

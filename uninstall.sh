@@ -18,6 +18,3 @@ fi
 for x in node npm npx; do
   rm /usr/local/bin/$x
 done
-
-rm /root/.npmrc
-rm /home/*/.npmrc
