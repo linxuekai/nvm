@@ -1,10 +1,9 @@
 #!/bin/bash
 
-# 需要权限
-[ "root" = "$(whoami)" ] || {
-  echo '非 root 请使用 sudo 运行'
-  exit 1
-}
+. ./func.sh
+
+# @func - 需要权限时检查如果不是 root 运行就退出
+check_permission
 
 nvm_conf_profile=/etc/profile.d/nvm-conf-profile.sh
 

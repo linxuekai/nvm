@@ -1,10 +1,9 @@
 #!/bin/bash
 
-# 需要权限
-[ "root" = "$USER" ] || {
-  echo '非 root 请使用 sudo 运行'
-  exit 1
-}
+. ./funcs.sh
+
+# @func - 需要权限时检查如果不是 root 运行就退出
+check_permission
 
 rm -r /opt/nvm
 rm /usr/local/bin/nvm
