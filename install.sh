@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ./func.sh
+. ./funcs.sh
 
 # @func - 需要权限时检查如果不是 root 运行就退出
 check_permission

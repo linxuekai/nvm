@@ -1,6 +1,6 @@
 #/bin/bash
 
-. ./func.sh
+. ./funcs.sh
 
 # 定义变量
 nvm_base=/opt/nvm
