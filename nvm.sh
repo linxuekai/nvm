@@ -208,7 +208,7 @@ remove () {
 }
 
 all () {
-     curl -s https://npm.taobao.org/mirrors/node/index.tab | awk '/v[1-9][0-9]?\.[0-9]+\.[0-9]+/ {if (($(NF-1) != "-")) {print $1"\tlts:"$(NF-1)} else {print $1}}'
+     curl -sL https://npm.taobao.org/mirrors/node/index.tab | awk '/v[1-9][0-9]?\.[0-9]+\.[0-9]+/ {if (($(NF-1) != "-")) {print $1"\tlts:"$(NF-1)} else {print $1}}'
 }
 
 case "$1" in
